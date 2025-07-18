@@ -5,10 +5,7 @@ library(here)
 # Set common dependencies used across both pipelines
 tar_option_set(
   packages = c(
-    "DBI", "RPostgres", "dplyr", "lubridate", "mice", "caret", "pROC",
-    "tibble", "ggplot2", "naniar", "randomForest", "nnet", "xgboost",
-    "tidyr", "themis", "MLmetrics", "VGAM", "gratia", "purrr",  # ← ADD purrr
-    "dbscan", "cluster", "GGally", "ggcorrplot", "factoextra"
+    "DBI", "RPostgres", "dplyr"
   )
 )
 
