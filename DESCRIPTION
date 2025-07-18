@@ -1,6 +1,12 @@
 Package: mthm503
-Type: Project
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
+Type: Package
+Title: Analysis of Fire and Rescue Extrication Data
 Version: 0.1.0
+Author: Jamshidbek Kuchkarov [aut]
+Maintainer: Jamshidbek Kuchkarov <jk798@exeter.ac.uk>
+Description: Contains code and analysis for the MTHM503 project. This includes preprocessing, modelling, and evaluation of fire rescue extrication and traffic accident data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
+R: (>= 4.1.0)

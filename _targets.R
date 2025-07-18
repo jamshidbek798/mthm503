@@ -13,23 +13,21 @@ tar_option_set(
 )
 
 # Load Supervised Classification functions
-source(here("R", "Supervised Classification Pipline", "load_data.R"))
-source(here("R", "Supervised Classification Pipline", "prepare_data.R"))
-source(here("R", "Supervised Classification Pipline", "modeling.R"))
+source(here("R", "supervised_classification_pipeline", "load_data.R"))
+source(here("R", "supervised_classification_pipeline", "prepare_data.R"))
+source(here("R", "supervised_classification_pipeline", "modeling.R"))
 
 # Load Regression pipeline functions
-source(here("R", "Regression Pipline", "load_fire_data.R"))
-source(here("R", "Regression Pipline", "prepare_fire_data.R"))
-source(here("R", "Regression Pipline", "model_fire_glm.R"))
-source(here("R", "Regression Pipline", "model_fire_gam.R"))
+source(here("R", "regression_pipeline", "load_fire_data.R"))
+source(here("R", "regression_pipeline", "prepare_fire_data.R"))
+source(here("R", "regression_pipeline", "model_fire_glm.R"))
+source(here("R", "regression_pipeline", "model_fire_gam.R"))
 
 # Load Unsupervised Pipeline functions
-source(here("R", "Unsupervised Learning Pipeline", "load_data.R"))
-source(here("R", "Unsupervised Learning Pipeline", "eda.R"))
-source(here("R", "Unsupervised Learning Pipeline", "pca.R"))
-source(here("R", "Unsupervised Learning Pipeline", "clustering.R"))
-
-
+source(here("R", "unsupervised_learning_pipeline", "load_data.R"))
+source(here("R", "unsupervised_learning_pipeline", "eda.R"))
+source(here("R", "unsupervised_learning_pipeline", "pca.R"))
+source(here("R", "unsupervised_learning_pipeline", "clustering.R"))
 list(
   ### ── Supervised Classification ────────────────────────────────
   tar_target(raw_data,     load_data()),
