@@ -20,9 +20,9 @@ req <- request(paste0(supabase_url, "/rest/v1/", table)) %>%
     `Accept` = "application/json",
     `Prefer` = "count=exact",
     `Range-Unit` = "items",
-    `Range` = "0-0"  # Only request the first row
+    `Range` = "0-0" # Only request the first row
   ) %>%
-  req_url_query(select = "accident_index")  # or any column
+  req_url_query(select = "accident_index") # or any column
 
 resp <- req_perform(req)
 
@@ -42,7 +42,7 @@ req <- request(paste0(supabase_url, "/rest/v1/", table)) %>%
     `Range-Unit` = "items",
     `Range` = "0-9"
   ) %>%
-  req_url_query(select = "*")  # selects all columns
+  req_url_query(select = "*") # selects all columns
 
 # Perform request
 resp <- req_perform(req)

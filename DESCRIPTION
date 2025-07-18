@@ -1,2 +1,6 @@
 Package: mthm503
 Type: Project
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Version: 0.1.0

@@ -71,7 +71,7 @@ n <- 300
 centers <- matrix(c(2, 2, -2, -2, 2, -2), ncol = 2, byrow = TRUE)
 group <- sample(1:3, n, replace = TRUE)
 X <- centers[group, ] + matrix(rnorm(n * 2, sd = 1.2), ncol = 2)
-data <- data.frame(x = X[,1], y = X[,2], label = factor(group))
+data <- data.frame(x = X[, 1], y = X[, 2], label = factor(group))
 
 # Supervised plot
 p1 <- ggplot() +
@@ -136,8 +136,8 @@ $$\hat{y}_i = \hat{C}(\bf x_i)$$
 ### Dimensionality is important
 
 ```{r bi_class_data, echo = FALSE}
-X1 <- mvrnorm(100, c(0, 0), matrix(c(1, 0.9, 0.9, 1),2,2))
-X2 <- mvrnorm(100, c(0, 1), matrix(c(1, 0.9, 0.9, 1),2,2))
+X1 <- mvrnorm(100, c(0, 0), matrix(c(1, 0.9, 0.9, 1), 2, 2))
+X2 <- mvrnorm(100, c(0, 1), matrix(c(1, 0.9, 0.9, 1), 2, 2))
 X <- rbind(X1, X2)
 X <- as.data.frame(X)
 X$group <- as.factor(c(rep(1, 100), rep(2, 100)))
@@ -146,7 +146,8 @@ colnames(X) <- c("x", "y", "group")
 
 p <- ggplot(X, aes(x = x, y = y, color = group)) +
   geom_point(alpha = 0.7) +
-  theme_minimal() + labs(title = "Made up data")
+  theme_minimal() +
+  labs(title = "Made up data")
 
 # Add marginal density plots
 ggExtra::ggMarginal(p, type = "density", groupColour = TRUE, groupFill = TRUE)
@@ -171,10 +172,12 @@ grid$pred <- pred$class
 # Add boundary with contour
 p <- ggplot(X, aes(x = x, y = y, color = group)) +
   geom_point(alpha = 0.7) +
-  geom_contour(data = cbind(grid, z = as.numeric(pred$class == 2)),
-               aes(x = x, y = y, z = z),
-               breaks = 0.5,
-               color = "black", linewidth = 1) +
+  geom_contour(
+    data = cbind(grid, z = as.numeric(pred$class == 2)),
+    aes(x = x, y = y, z = z),
+    breaks = 0.5,
+    color = "black", linewidth = 1
+  ) +
   theme_minimal() +
   labs(title = "QDA Decision Boundary")
 
@@ -222,9 +225,9 @@ library(dplyr)
 data(Default)
 set.seed(42)
 n_train <- 5000
-default_idx = sample(nrow(Default), n_train)
-train_default = Default[default_idx, ]
-test_default = Default[-default_idx, ]
+default_idx <- sample(nrow(Default), n_train)
+train_default <- Default[default_idx, ]
+test_default <- Default[-default_idx, ]
 ```
 
 ### In a targets pipeline
@@ -234,9 +237,9 @@ In targets, write a function to create the test and training sets:
 ```{r testtrainfunction, echo = TRUE}
 create_test_and_train <- function(df, n_train = 5000) {
   set.seed(42)
-  idx = sample(nrow(df), n_train)
-  train = df[idx, ]
-  test = df[-idx, ]
+  idx <- sample(nrow(df), n_train)
+  train <- df[idx, ]
+  test <- df[-idx, ]
   return(list(test = test, train = train))
 }
 ```
@@ -272,7 +275,6 @@ While we're developing our pipeline, we can obtain data from any part of an exec
 
 ```{r tarload, echo = TRUE, eval = FALSE}
 targets::tar_load(test_and_train)
-
 ```
 
 And from here, we can access the data as `test_and_train$train` and `test_and_train$test`.   I can even use `test <- test_and_train$train` etc. to save typing.
@@ -283,16 +285,15 @@ We might want to do some EDA before building a classifier
 
 ```{r featureplot, echo = FALSE}
 caret::featurePlot(
-  x = test_and_train$train[, c("balance", "income")], 
+  x = test_and_train$train[, c("balance", "income")],
   y = test_and_train$train$default,
-  plot = "density", 
-  scales = list(x = list(relation = "free"), y = list(relation = "free")), 
-  adjust = 1.5, 
-  pch = "|", 
-  layout = c(2, 1), 
+  plot = "density",
+  scales = list(x = list(relation = "free"), y = list(relation = "free")),
+  adjust = 1.5,
+  pch = "|",
+  layout = c(2, 1),
   auto.key = list(columns = 2)
-  )
-
+)
 ```
 
 ### A cosmetic plot
@@ -300,13 +301,12 @@ caret::featurePlot(
 We're hoping to distinguish the labels in high dimensional space
 
 ```{r classifiergoal, echo = FALSE}
-
 caret::featurePlot(
-  x = test_and_train$train[, c("balance", "income")], 
-  y = test_and_train$train$default, 
+  x = test_and_train$train[, c("balance", "income")],
+  y = test_and_train$train$default,
   plot = "ellipse",
   auto.key = list(columns = 2)
-  )
+)
 ```
 
 
@@ -316,28 +316,31 @@ caret::featurePlot(
 Looking at the first plot, we could just take all values of `x` above a cut-off, say `balance` above 1,400
 
 ```{r simpleclass, echo = TRUE}
-simple_class = function(x, boundary, above = 1, below = 0) {
+simple_class <- function(x, boundary, above = 1, below = 0) {
   ifelse(x > boundary, above, below)
 }
-train_pred = simple_class(x = test_and_train$train$balance, 
-                          boundary = 1400, above = "Yes", below = "No")
-test_pred = simple_class(x = test_and_train$test$balance, 
-                         boundary = 1400, above = "Yes", below = "No")
+train_pred <- simple_class(
+  x = test_and_train$train$balance,
+  boundary = 1400, above = "Yes", below = "No"
+)
+test_pred <- simple_class(
+  x = test_and_train$test$balance,
+  boundary = 1400, above = "Yes", below = "No"
+)
 ```
 
 ### Performance on training data?
 
 ```{r, echo = TRUE}
-train_tab = table(predicted = train_pred, actual = test_and_train$train$default)
-(train_con_mat = caret::confusionMatrix(train_tab, positive = "Yes"))
+train_tab <- table(predicted = train_pred, actual = test_and_train$train$default)
+(train_con_mat <- caret::confusionMatrix(train_tab, positive = "Yes"))
 ```
 
 ### And on the test data
 
 ```{r, echo = TRUE}
-test_tab = table(predicted = test_pred, actual = test_and_train$test$default)
-(test_con_mat = caret::confusionMatrix(test_tab, positive = "Yes"))
-
+test_tab <- table(predicted = test_pred, actual = test_and_train$test$default)
+(test_con_mat <- caret::confusionMatrix(test_tab, positive = "Yes"))
 ```
 
 
@@ -428,23 +431,25 @@ $$ p(x) = \frac{1}{1+\exp{\{−(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \
 Fit the model to the training data
 
 ```{r fit_glm, echo = TRUE}
-model_glm = glm(default ~ balance, 
-                data = test_and_train$train, family = binomial())
+model_glm <- glm(default ~ balance,
+  data = test_and_train$train, family = binomial()
+)
 ```
 
 And obtain predictions (eventually) from the test data
 
 ```{r test_glm, echo = TRUE}
-model_glm_pred = ifelse(predict(model_glm, 
-                                newdata = test_and_train$test, 
-                                type = "response") > 0.5, "Yes", "No")
+model_glm_pred <- ifelse(predict(model_glm,
+  newdata = test_and_train$test,
+  type = "response"
+) > 0.5, "Yes", "No")
 ```
 
 ### Performance
 
 ```{r glmperf, echo = TRUE}
-test_tab = table(predicted = model_glm_pred, actual = test_and_train$test$default)
-test_confusion_matrix = caret::confusionMatrix(test_tab, positive = "Yes")
+test_tab <- table(predicted = model_glm_pred, actual = test_and_train$test$default)
+test_confusion_matrix <- caret::confusionMatrix(test_tab, positive = "Yes")
 test_confusion_matrix
 ```
 
@@ -453,9 +458,11 @@ test_confusion_matrix
 
 
 ```{r accsensspec, echo = TRUE}
-c(train_con_mat$overall["Accuracy"], 
-  train_con_mat$byClass["Sensitivity"], 
-  train_con_mat$byClass["Specificity"])
+c(
+  train_con_mat$overall["Accuracy"],
+  train_con_mat$byClass["Sensitivity"],
+  train_con_mat$byClass["Specificity"]
+)
 ```
 
 
@@ -464,30 +471,36 @@ c(train_con_mat$overall["Accuracy"],
 ```{r logisticplot, echo = FALSE}
 train_default %>%
   mutate(default = as.numeric(.data$default) - 1) %>%
-  ggplot(aes(x = .data$balance, y = .data$default)) + 
+  ggplot(aes(x = .data$balance, y = .data$default)) +
   geom_point(color = "darkorange", shape = "|") +
   geom_hline(yintercept = c(0, 1), linetype = "dashed") +
   geom_hline(yintercept = 0.5, linetype = "dotted") +
-  stat_function(fun = function(x) predict(
-    model_glm, data.frame(balance = x), type = "response"),
-                color = "dodgerblue", linewidth = 1.2) +
+  stat_function(
+    fun = function(x) {
+      predict(
+        model_glm, data.frame(balance = x),
+        type = "response"
+      )
+    },
+    color = "dodgerblue", linewidth = 1.2
+  ) +
   geom_vline(xintercept = -coef(model_glm)[1] / coef(model_glm)[2], linewidth = 1.2) +
-  labs(title = "Using Logistic Regression for Classification",
-       x = "Balance",
-       y = "Default") +
+  labs(
+    title = "Using Logistic Regression for Classification",
+    x = "Balance",
+    y = "Default"
+  ) +
   theme_minimal()
-
 ```
 
 ### ROC curves
 
 ```{r roc}
 library(pROC)
-test_prob = predict(model_glm, newdata = test_default, type = "response")
-test_roc = pROC::roc(test_default$default ~ test_prob, 
-                     plot = TRUE, print.auc = TRUE)
-
-
+test_prob <- predict(model_glm, newdata = test_default, type = "response")
+test_roc <- pROC::roc(test_default$default ~ test_prob,
+  plot = TRUE, print.auc = TRUE
+)
 ```
 
 
@@ -503,14 +516,14 @@ test_roc = pROC::roc(test_default$default ~ test_prob,
 set.seed(42)
 # Generate circular data: inner circle = class 1, outer ring = class 2
 n <- 300
-r_inner <- sqrt(runif(n/2, min = 0.0, max = 1.0))
-theta_inner <- runif(n/2, 0, 2*pi)
+r_inner <- sqrt(runif(n / 2, min = 0.0, max = 1.0))
+theta_inner <- runif(n / 2, 0, 2 * pi)
 x_inner <- r_inner * cos(theta_inner)
 y_inner <- r_inner * sin(theta_inner)
 class1 <- data.frame(x = x_inner, y = y_inner, label = factor(1))
 
-r_outer <- sqrt(runif(n/2, min = 4.0, max = 6.0))
-theta_outer <- runif(n/2, 0, 2*pi)
+r_outer <- sqrt(runif(n / 2, min = 4.0, max = 6.0))
+theta_outer <- runif(n / 2, 0, 2 * pi)
 x_outer <- r_outer * cos(theta_outer)
 y_outer <- r_outer * sin(theta_outer)
 class2 <- data.frame(x = x_outer, y = y_outer, label = factor(2))
@@ -524,7 +537,6 @@ ggplot() +
   geom_point(data = data, aes(x = x, y = y, color = label), size = 2) +
   labs(title = "QDA on Circular Data (Non-linear Boundary)", fill = "Predicted", color = "Label") +
   theme_minimal()
-
 ```
 
 ### And showing the boundaries
@@ -548,7 +560,6 @@ ggplot() +
   geom_point(data = data, aes(x = x, y = y, color = label), size = 2) +
   labs(title = "QDA on Circular Data (Non-linear Boundary)", fill = "Predicted", color = "Label") +
   theme_minimal()
-
 ```
 
 ## Unsupervised classification
@@ -560,12 +571,11 @@ If I were interested in Pokemon
 ```{r pokemondata, echo = FALSE}
 library(dplyr)
 pk <- read.csv("C:/Users/ph516/Downloads/All_pokemon.csv")
-pk[duplicated(pk$Pokemon),"Pokemon"] <- "Nidoran 2 (?)"
+pk[duplicated(pk$Pokemon), "Pokemon"] <- "Nidoran 2 (?)"
 rownames(pk) <- pk$Pokemon
-pocleaned <- pk %>% 
+pocleaned <- pk %>%
   dplyr::select(HP:Spd)
-head(pocleaned)  
-  
+head(pocleaned)
 ```
 
 ### kmeans clustering
@@ -607,9 +617,13 @@ plot_clusters <- function(data, k) {
   p <- ggplot(data, aes(x = x, y = y, color = cluster)) +
     geom_point(size = 4) +
     geom_point(data = centers, aes(x = x, y = y), shape = 4, size = 5, stroke = 2, color = "black") +
-    geom_segment(data = data, aes(xend = centers[kmeans_result$cluster, "x"],
-                                  yend = centers[kmeans_result$cluster, "y"]),
-                 arrow = arrow(length = unit(0.1, "inches")), alpha = 0.4, linetype = "dotted") +
+    geom_segment(
+      data = data, aes(
+        xend = centers[kmeans_result$cluster, "x"],
+        yend = centers[kmeans_result$cluster, "y"]
+      ),
+      arrow = arrow(length = unit(0.1, "inches")), alpha = 0.4, linetype = "dotted"
+    ) +
     labs(title = paste("k =", k, " | WCSS =", round(wcss, 2))) +
     theme_minimal()
 
@@ -637,7 +651,6 @@ wss <- sapply(1:10, function(k) {
 
 # Create the scree plot using ggplot2
 elbow_df <- data.frame(k = 1:10, wss = wss)
-
 ```
 
 ### What does an elbow plot look like
@@ -648,9 +661,11 @@ ggplot(elbow_df, aes(x = k, y = wss)) +
   geom_point() +
   scale_y_continuous(labels = scales::comma) +
   scale_x_continuous(breaks = seq(1, 10, by = 1)) +
-  labs(title = "Scree Plot for k-means Clustering",
-       x = "Number of Clusters (k)",
-       y = "Within-Cluster Sum of Squares (WSS)") +
+  labs(
+    title = "Scree Plot for k-means Clustering",
+    x = "Number of Clusters (k)",
+    y = "Within-Cluster Sum of Squares (WSS)"
+  ) +
   theme_minimal()
 ```
 
@@ -666,7 +681,7 @@ library(MASS)
 
 # Generate correlated data
 set.seed(123)
-Sigma <- matrix(c(1, 0.8, 0.8, 1), 2, 2)  # Covariance matrix
+Sigma <- matrix(c(1, 0.8, 0.8, 1), 2, 2) # Covariance matrix
 data <- as.data.frame(mvrnorm(n = 100, mu = c(0, 0), Sigma = Sigma))
 colnames(data) <- c("X", "Y")
 
@@ -678,15 +693,17 @@ data$y_hat <- predict(lm_model, newdata = data)
 
 # Plot with vertical projection lines onto regression line
 ggplot(data, aes(x = X, y = Y)) +
-  geom_point(color = "darkorange") +  # Original points
-  geom_segment(aes(x = X, y = Y, xend = X, yend = y_hat), 
-               color = "gray", linewidth = 0.5) +  # Vertical projection lines
-  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Linear regression line
-  labs(title = "Scatterplot with Regression Line and Projections onto Ŷ",
-       x = "X Variable",
-       y = "Y Variable") +
+  geom_point(color = "darkorange") + # Original points
+  geom_segment(aes(x = X, y = Y, xend = X, yend = y_hat),
+    color = "gray", linewidth = 0.5
+  ) + # Vertical projection lines
+  geom_smooth(method = "lm", color = "red", se = FALSE) + # Linear regression line
+  labs(
+    title = "Scatterplot with Regression Line and Projections onto Ŷ",
+    x = "X Variable",
+    y = "Y Variable"
+  ) +
   theme_minimal()
-
 ```
 
 ### But principal components
@@ -694,7 +711,7 @@ ggplot(data, aes(x = X, y = Y)) +
 ```{r, pca, echo = FALSE}
 # Generate correlated data
 set.seed(123)
-Sigma <- matrix(c(1, 0.8, 0.8, 1), 2, 2)  # Covariance matrix
+Sigma <- matrix(c(1, 0.8, 0.8, 1), 2, 2) # Covariance matrix
 data <- as.data.frame(mvrnorm(n = 100, mu = c(0, 0), Sigma = Sigma))
 colnames(data) <- c("X", "Y")
 
@@ -702,16 +719,16 @@ colnames(data) <- c("X", "Y")
 pca <- prcomp(data, center = TRUE, scale. = TRUE)
 
 # Extract first principal component vector
-pc1 <- pca$rotation[, 1]  
+pc1 <- pca$rotation[, 1]
 
 # Compute PC1 slope for visualization
 pc1_slope <- pc1[2] / pc1[1]
 
 # Compute true orthogonal projection onto PC1
 compute_projection <- function(x, y, pc1, center) {
-  vec <- c(x, y) - center  # Translate to origin
-  proj_length <- sum(vec * pc1)  # Projection scalar
-  proj_point <- center + proj_length * pc1  # Projected point onto PC1
+  vec <- c(x, y) - center # Translate to origin
+  proj_length <- sum(vec * pc1) # Projection scalar
+  proj_point <- center + proj_length * pc1 # Projected point onto PC1
   return(proj_point)
 }
 
@@ -722,18 +739,21 @@ data$proj_Y <- projections[, 2]
 
 # Plot with properly orthogonal projections onto PC1
 ggplot(data, aes(x = X, y = Y)) +
-  geom_point(color = "darkorange") +  # Original points
-  geom_segment(aes(x = X, y = Y, xend = proj_X, yend = proj_Y), 
-               color = "gray", linewidth = 0.5) +  # True orthogonal projection arrows
-  geom_abline(slope = pc1_slope, intercept = pca$center[2] - pca$center[1] * pc1_slope, 
-              color = "dodgerblue", linewidth = 1) +  # Correct PCA axis
-  coord_fixed() +  # Ensures equal scaling of x and y axes
-  labs(title = "Scatterplot with PCA Axis and True Orthogonal Projections",
-       x = "X Variable",
-       y = "Y Variable") +
+  geom_point(color = "darkorange") + # Original points
+  geom_segment(aes(x = X, y = Y, xend = proj_X, yend = proj_Y),
+    color = "gray", linewidth = 0.5
+  ) + # True orthogonal projection arrows
+  geom_abline(
+    slope = pc1_slope, intercept = pca$center[2] - pca$center[1] * pc1_slope,
+    color = "dodgerblue", linewidth = 1
+  ) + # Correct PCA axis
+  coord_fixed() + # Ensures equal scaling of x and y axes
+  labs(
+    title = "Scatterplot with PCA Axis and True Orthogonal Projections",
+    x = "X Variable",
+    y = "Y Variable"
+  ) +
   theme_minimal()
-
-
 ```
 
 ### Principal components: key ideas
@@ -748,14 +768,12 @@ ggplot(data, aes(x = X, y = Y)) +
 ### Plotting three clusters on the first two principal component projections
 
 ```{r pokemonprojected, echo = FALSE}
-popr <- prcomp(pocleaned[,-7])
-rescaled <- data.frame(z1 = predict(popr)[,1], z2 = predict(popr)[,2])
+popr <- prcomp(pocleaned[, -7])
+rescaled <- data.frame(z1 = predict(popr)[, 1], z2 = predict(popr)[, 2])
 rescaled$cluster <- as.factor(km_three$cluster)
 rescaled %>%
   ggplot(aes(x = z1, y = z2, color = cluster)) +
   geom_point()
-
-
 ```
 
 ## Study plans

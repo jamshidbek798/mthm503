@@ -18,7 +18,7 @@ You need a working pandoc installation on your computer (this should be taken ca
 ```{r load_data_and_packages, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
 if (file.exists("../_targets")) {
   targets::tar_config_set("store" = "../_targets")
-  }
+}
 targets::tar_load(summary_data)
 library(dplyr)
 library(ggplot2)
@@ -30,15 +30,19 @@ We can present a visual display of the number of road casualties as follows:
 
 ```{r pressure, echo=FALSE}
 summary_data %>%
-  ggplot(aes(x = casualty_severity, y = Casualties, 
-             fill = casualty_severity)) +
-  geom_bar(stat = "identity") + 
-  theme_bw() + 
-  xlab("Severity of Casualty") + 
-  ylab("Number of reported and sub-sampled casualties") + 
-  labs(title = "Number of reported pedestrian road casualties in 2023",
-       subtitle = "All fatalities, 10% of serious and 1% of slight casualties",
-       caption = "Source: STATs19, data.gov.uk")
+  ggplot(aes(
+    x = casualty_severity, y = Casualties,
+    fill = casualty_severity
+  )) +
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  xlab("Severity of Casualty") +
+  ylab("Number of reported and sub-sampled casualties") +
+  labs(
+    title = "Number of reported pedestrian road casualties in 2023",
+    subtitle = "All fatalities, 10% of serious and 1% of slight casualties",
+    caption = "Source: STATs19, data.gov.uk"
+  )
 ```
 
 Do note that there has been a lot of sub-sampling. All fatally injured road pedestrian casualties are included in the data, but 10% of serious and 1% of slight casualties were selected at random.
